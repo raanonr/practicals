@@ -7,7 +7,7 @@ def put_to_objectstore(credentials, object_name, my_data):
     print('my_data', len(my_data))
     url1 = ''.join(['https://identity.open.softlayer.com', '/v3/auth/tokens'])
     data = {'auth': {'identity': {'methods': ['password'],
-            'password': {'user': {'name': credentials['username'],'domain': {'id': credentials['domain_id']},
+            'password': {'user': {'name': credentials['username'], 'domain': {'id': credentials['domain_id']},
             'password': credentials['password']}}}}}
     headers1 = {'Content-Type': 'application/json'}
     resp1 = requests.post(url=url1, data=json.dumps(data), headers=headers1)
@@ -20,16 +20,16 @@ def put_to_objectstore(credentials, object_name, my_data):
     s_subject_token = resp1.headers['x-subject-token']
     headers2 = {'X-Auth-Token': s_subject_token, 'accept': 'application/json'}
     resp2 = requests.put(url=url2, headers=headers2, data = my_data )
-
+    return resp2
 
 def file2object(path):
     obj = {}
-	with open(path, 'rb') as f:
+    with open(path, 'rb') as f:
         obj = f.read()  
     return obj
 
 def gmodel2object(model):
     with NamedTemporaryFile() as f:
-		model.save(f.name)
-		obj = f.read()  
+        model.save(f.name)
+        obj = f.read()  
     return obj

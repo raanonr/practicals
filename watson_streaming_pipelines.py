@@ -3,6 +3,7 @@ from io import BytesIO
 import requests  
 import json  
 import pickle
+import numpy as np
 
 def serializeObject(tokenizer):
     with NamedTemporaryFile() as f:

@@ -49,3 +49,4 @@ def put_to_objectstore(credentials, object_name, my_data, region='dallas'):
     s_subject_token = resp1.headers['x-subject-token']
     headers2 = {'X-Auth-Token': s_subject_token, 'accept': 'application/json'}
     resp2 = requests.put(url=url2, headers=headers2, data = my_data )
+

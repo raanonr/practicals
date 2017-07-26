@@ -67,5 +67,5 @@ def get_from_objectstorage(credentials, object_name, region='dallas'):
     s_subject_token = resp1.headers['x-subject-token']
     headers2 = {'X-Auth-Token': s_subject_token, 'accept': 'application/json'}
     resp2 = requests.get(url=url2, headers=headers2)
-    return StringIO(resp2.text)
+    return BytesIO(resp2.text)
 

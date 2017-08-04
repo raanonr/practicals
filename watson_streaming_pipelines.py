@@ -4,6 +4,9 @@ import json
 import pickle
 import numpy as np
 from io import StringIO
+import ssl
+from kafka import KafkaProducer 
+from kafka.errors import KafkaError 
 
 def serializeObject(pythonObj):
     return pickle.dumps(pythonObj, pickle.HIGHEST_PROTOCOL)
@@ -75,3 +78,32 @@ def get_from_objectstore(credentials, object_name, binary=True, region='dallas')
     resp2 = requests.get(url=url2, headers=headers2)
     res = resp2.content if (binary) else StringIO(resp2.text)
     return res
+
+# make sure to install kafka-python library
+# !pip install kafka-python
+def create_messagehub_producer(username, password, value_serializer=lambda v: json.dumps(v).encode('utf-8')):
+    kafka_brokers_sasl = [
+        "kafka01-prod01.messagehub.services.us-south.bluemix.net:9093",
+        "kafka02-prod01.messagehub.services.us-south.bluemix.net:9093",
+        "kafka03-prod01.messagehub.services.us-south.bluemix.net:9093",
+        "kafka04-prod01.messagehub.services.us-south.bluemix.net:9093",
+        "kafka05-prod01.messagehub.services.us-south.bluemix.net:9093" 
+    ] 
+
+    sasl_mechanism = 'PLAIN'       # <-- changed from 'SASL_PLAINTEXT'
+    security_protocol = 'SASL_SSL'
+
+    # Create a new context using system defaults, disable all but TLS1.2
+    context = ssl.create_default_context()
+    context.options &= ssl.OP_NO_TLSv1
+    context.options &= ssl.OP_NO_TLSv1_1
+
+    producer = KafkaProducer(bootstrap_servers = kafka_brokers_sasl,
+                             sasl_plain_username = username,
+                             sasl_plain_password = password,
+                             security_protocol = security_protocol,
+                             ssl_context = context,
+                             sasl_mechanism = sasl_mechanism,
+                             value_serializer=value_serializer)
+                             
+    return producer

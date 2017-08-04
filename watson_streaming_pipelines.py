@@ -58,7 +58,7 @@ def put_to_objectstore(credentials, object_name, my_data, binary=True, region='d
     headers2 = {'X-Auth-Token': s_subject_token, 'accept': headers_accept}
     resp2 = requests.put(url=url2, headers=headers2, data = my_data )
 
-def get_from_objectstorage(credentials, object_name, binary=True, region='dallas'):
+def get_from_objectstore(credentials, object_name, binary=True, region='dallas'):
     url1 = ''.join(['https://identity.open.softlayer.com', '/v3/auth/tokens'])
     data = {'auth': {'identity': {'methods': ['password'], 'password': {'user': {'name': credentials['username'],'domain': {'id': credentials['domain_id']}, 'password': credentials['password']}}}}}
     headers1 = {'Content-Type': 'application/json'}

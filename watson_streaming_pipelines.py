@@ -81,17 +81,16 @@ def get_from_objectstore(credentials, object_name, binary=True, region='dallas')
 
 # make sure to install kafka-python library
 # !pip install kafka-python
-def create_messagehub_producer(username, password, value_serializer=lambda v: json.dumps(v).encode('utf-8')):
-    kafka_brokers_sasl = [
-        "kafka01-prod01.messagehub.services.us-south.bluemix.net:9093",
-        "kafka02-prod01.messagehub.services.us-south.bluemix.net:9093",
-        "kafka03-prod01.messagehub.services.us-south.bluemix.net:9093",
-        "kafka04-prod01.messagehub.services.us-south.bluemix.net:9093",
-        "kafka05-prod01.messagehub.services.us-south.bluemix.net:9093" 
-    ] 
-
-    sasl_mechanism = 'PLAIN'       # <-- changed from 'SASL_PLAINTEXT'
-    security_protocol = 'SASL_SSL'
+# https://github.com/dpkp/kafka-python
+def create_messagehub_producer(username, password, kafka_brokers_sasl = [], sasl_mechanism = 'PLAIN', security_protocol = 'SASL_SSL', value_serializer=lambda v: json.dumps(v).encode('utf-8')):
+    if (kafka_brokers_sasl == []):
+        kafka_brokers_sasl = [
+            "kafka01-prod01.messagehub.services.us-south.bluemix.net:9093",
+            "kafka02-prod01.messagehub.services.us-south.bluemix.net:9093",
+            "kafka03-prod01.messagehub.services.us-south.bluemix.net:9093",
+            "kafka04-prod01.messagehub.services.us-south.bluemix.net:9093",
+            "kafka05-prod01.messagehub.services.us-south.bluemix.net:9093" 
+        ] 
 
     # Create a new context using system defaults, disable all but TLS1.2
     context = ssl.create_default_context()

@@ -11,14 +11,14 @@ def serializeObject(pythonObj):
 def deserializeObject(pickledObj):
     return pickle.loads(pickledObj)
 
-def serializeModel(model):
+def serializeKerasModel(model):
     with NamedTemporaryFile() as f:
         model.save(f.name)
         f.seek(0)
         obj = f.read() 
     return obj
 
-def deserializeModel(pickledObj):
+def deserializeKerasModel(pickledObj):
     from keras.models import Model,load_model
     with NamedTemporaryFile() as f:
         pickle.dump(pickledObj, f)

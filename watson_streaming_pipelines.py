@@ -21,8 +21,7 @@ def serializeKerasModel(model):
 def deserializeKerasModel(pickledObj):
     from keras.models import Model,load_model
     with NamedTemporaryFile() as f:
-        pickle.dump(pickledObj, f)
-        f.seek(0)
+        f.write(pickledObj)
         model = load_model(f.name)  
     return model
     

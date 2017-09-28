@@ -18,10 +18,10 @@ def serializeKerasModel(model):
         obj = f.read() 
     return obj
 
-def deserializeKerasModel(pickledObj):
+def deserializeKerasModel(obj):
     from keras.models import Model,load_model
-    with NamedTemporaryFile() as f:
-        f.write(pickledObj)
+    with NamedTemporaryFile(mode='wb') as f:
+        f.write(obj)
         model = load_model(f.name)  
     return model
     

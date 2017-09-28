@@ -14,7 +14,6 @@ def deserializeObject(pickledObj):
 def serializeKerasModel(model):
     with NamedTemporaryFile() as f:
         model.save(f.name)
-        f.seek(0)
         obj = f.read() 
     return obj
 
@@ -22,6 +21,7 @@ def deserializeKerasModel(obj):
     from keras.models import Model,load_model
     with NamedTemporaryFile(mode='wb') as f:
         f.write(obj)
+        f.flush()
         model = load_model(f.name)  
     return model
     

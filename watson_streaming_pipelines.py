@@ -19,10 +19,11 @@ def serializeKerasModel(model):
         obj = f.read() 
     return obj
 
-def deserializeKerasModel(pickledObj):
+def deserializeKerasModel(obj):
     from keras.models import Model,load_model
     with NamedTemporaryFile(mode='wb') as f:
-        f.write(pickledObj)
+        f.write(obj)
+        f.flush()
         model = load_model(f.name)  
     return model
     
@@ -69,7 +70,7 @@ def get_from_objectstore(credentials, object_name, binary=True, region='dallas')
             for e2 in e1['endpoints']:
                         if(e2['interface']=='public'and e2['region']==region):
                             url2 = ''.join([e2['url'],'/', credentials['container'], '/', object_name])
-    s_subject_token = resp1.headers['x-subject-token']_
+    s_subject_token = resp1.headers['x-subject-token']
     headers_accept = 'application/octet-stream' if (binary) else 'application/json' 
     headers2 = {'X-Auth-Token': s_subject_token, 'accept': headers_accept}
     resp2 = requests.get(url=url2, headers=headers2)

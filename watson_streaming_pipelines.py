@@ -76,7 +76,10 @@ def get_from_objectstore(credentials, object_name, binary=True, region='dallas')
     res = resp2.content if (binary) else StringIO(resp2.text)
     return res
     
-# make sure to install
+    
+# Make sure to install: ibm-cos-sdk
+# !pip install ibm-cos-sdk
+# https://github.com/IBM/ibm-cos-sdk-python
 def get_cloud_object_storage(apikey, resource_instance_id, auth_endpoint = 'https://iam.bluemix.net/oidc/token', service_endpoint = 'https://s3-api.us-geo.objectstorage.softlayer.net'):
     import boto3
     from botocore.client import Config
@@ -96,16 +99,12 @@ def put_to_cloud_object_storage(cos, bucket_name, obj, name):
 def get_from_cloud_object_storage(cos, bucket_name, name): 
     obj = None
     path = None
-    
     with NamedTemporaryFile(mode='wb', delete=False) as f:
         path = f.name
         cos.Bucket(bucket_name).download_file(name, path) 
-    
     with open(path, mode='rb') as f:
-        obj = f.read()
-    
+        obj = f.read()    
     os.remove(path)
-    
     return obj
         
 

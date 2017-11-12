@@ -92,17 +92,17 @@ def get_cloud_object_storage(apikey, resource_instance_id, auth_endpoint = 'http
                           endpoint_url = service_endpoint)
     return cos
                          
-def put_to_cloud_object_storage(cos, bucket_name, obj, name): 
+def put_to_cloud_object_storage(cos, bucket_name, object_name, my_data): 
     with NamedTemporaryFile() as f:
-        f.write(obj)
-        cos.Bucket(bucket_name).upload_file(f.name, name)
+        f.write(my_data)
+        cos.Bucket(bucket_name).upload_file(f.name, object_name)
         
-def get_from_cloud_object_storage(cos, bucket_name, name): 
+def get_from_cloud_object_storage(cos, bucket_name, object_name): 
     obj = None
     path = None
     with NamedTemporaryFile(mode='wb', delete=False) as f:
         path = f.name
-        cos.Bucket(bucket_name).download_file(name, path) 
+        cos.Bucket(bucket_name).download_file(object_name, path) 
     with open(path, mode='rb') as f:
         obj = f.read()    
     os.remove(path)

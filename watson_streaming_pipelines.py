@@ -95,6 +95,7 @@ def get_cloud_object_storage(apikey, resource_instance_id, auth_endpoint = 'http
 def put_to_cloud_object_storage(cos, bucket_name, object_name, my_data): 
     with NamedTemporaryFile() as f:
         f.write(my_data)
+        f.flush()
         cos.Bucket(bucket_name).upload_file(f.name, object_name)
         
 def get_from_cloud_object_storage(cos, bucket_name, object_name): 

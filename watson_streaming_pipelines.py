@@ -77,38 +77,39 @@ def get_from_objectstore(credentials, object_name, binary=True, region='dallas')
     res = resp2.content if (binary) else StringIO(resp2.text)
     return res
     
-    
-# Make sure to install: ibm-cos-sdk
-# !pip install ibm-cos-sdk
-# https://github.com/IBM/ibm-cos-sdk-python
-def get_cloud_object_storage(apikey, resource_instance_id, auth_endpoint = 'https://iam.bluemix.net/oidc/token', service_endpoint = 'https://s3-api.us-geo.objectstorage.softlayer.net'):
-    import boto3
-    from botocore.client import Config
-    cos = boto3.resource('s3',
-                          ibm_api_key_id = apikey,
-                          ibm_service_instance_id = resource_instance_id,
-                          ibm_auth_endpoint = auth_endpoint,
-                          config=Config(signature_version='oauth'),
-                          endpoint_url = service_endpoint)
-    return cos
-                         
-def put_to_cloud_object_storage(cos, bucket_name, object_name, my_data): 
+       
+def put_to_cloud_object_storage(api_key, full_object_path, my_data, auth_endpoint="https://iam.ng.bluemix.net/oidc/token", service_endpoint="https://s3-api.us-geo.objectstorage.softlayer.net"): 
     print('my_data', len(my_data))
-    with NamedTemporaryFile() as f:
-        f.write(my_data)
-        f.flush()
-        cos.Bucket(bucket_name).upload_file(f.name, object_name)
+    response=requests.post(
+                url=auth_endpoint,
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                params={"grant_type":"urn:ibm:params:oauth:grant-type:apikey","apikey":api_key},
+                verify=True)
+    access_token=response.json()["access_token"]
+
+    response=requests.put(
+                url=service_endpoint+"/"+full_object_path,
+                headers={"Authorization": "bearer " + access_token},
+                data = my_data)
+                
+    return response
+
         
-def get_from_cloud_object_storage(cos, bucket_name, object_name): 
-    obj = None
-    path = None
-    with NamedTemporaryFile(mode='wb', delete=False) as f:
-        path = f.name
-        cos.Bucket(bucket_name).download_file(object_name, path) 
-    with open(path, mode='rb') as f:
-        obj = f.read()    
-    os.remove(path)
-    return obj
+def get_from_cloud_object_storage(api_key, full_object_path, auth_endpoint="https://iam.ng.bluemix.net/oidc/token", service_endpoint="https://s3-api.us-geo.objectstorage.softlayer.net"):
+    response=requests.post(
+                url=auth_endpoint,
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                params={"grant_type":"urn:ibm:params:oauth:grant-type:apikey","apikey":api_key},
+                verify=True)
+    access_token=response.json()["access_token"]
+
+    response=requests.get(
+                url=service_endpoint+"/"+full_object_path,
+                headers={"Authorization": "bearer " + access_token},
+                params=None,
+                verify=True)
+
+    return response.content
         
 
 # Make sure to install: ibm-cos-sdk
